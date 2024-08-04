@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics</title>
+
+    <style>
+        #song {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="Header">
+        <h1 style="text-align: center;">Praveen Lyrics</h1>
+    </div>
+    <div id="song">
+        <audio src="../{{filename}}" controls id="music"></audio>
+        <h2 style="font-weight: bold; text-align: center;" id="lyrics">Lyrics Goes Here lalalalallalalalalla....</h2>
+        <button onclick="playAudio()" id="btn">Play</button>
+    </div>
+
+    <script>
+        var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+
+        function changeColor() {
+            var randomIndex = Math.floor(Math.random() * colors.length);
+            var randomColor = colors[randomIndex];
+            document.body.style.backgroundColor = randomColor;
+        }
+
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function playAudio() {
+            var music = document.getElementById('music');
+            music.play();
+            music.style.display = 'none';
+            var btn = document.getElementById('btn').style.display = 'none';
+            var csrfToken = getCSRFToken();
+
+            data = {
+                lyrics: '{{ linkk }}'
+            }
+
+            const response = await fetch('/lyrics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            });
+
+            const responseData = await response.json();
+
+            var start_time = 0;
+            const items = responseData['msg'];
+
+            for (let i = 0; i < items.length; i++) {
+                const text = items[i]['text'];
+                const start = items[i]['start'];
+
+                // Sleep for the specified time
+                var lyrics = document.getElementById('lyrics');
+                
+                console.log('start',start)
+                var sleepTime = (start - start_time) * 1000;
+                console.log('sleep',sleepTime);
+                await sleep(sleepTime); 
+                changeColor();
+ 
+                if (text.length === 1 ) {
+                    lyrics.innerHTML = "[Music]";
+                } else{
+                    lyrics.innerHTML = text;
+                }
+                console.log(text)
+                
+                start_time = start;
+            }
+        }
+    
+
+        </script>
+
+        
+            </body>
+
+</html>
