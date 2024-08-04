@@ -24,7 +24,7 @@ This Flask application allows users to search for and download the audio of a so
 1. Clone the repository:
 
    ```sh
-   git clone [https://github.com/your-repo/your-project.git] (https://github.com/frontenddeveloperpraveen/Songdownloader)
+   git clone https://github.com/frontenddeveloperpraveen/Songdownloader
    cd your-project
    ```
 
